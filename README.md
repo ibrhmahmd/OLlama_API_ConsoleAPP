@@ -7,12 +7,6 @@ This repository demonstrates how to interact with the Ollama APIs using the `Oll
 - **List models**: View all available models.
 - **Chat interaction**: Send chat messages to a specific model and receive responses.
 
-## Prerequisites
-Before running the project, ensure you have the following:
-- [.NET 6 or later](https://dotnet.microsoft.com/download)
-- [Ollama API Key](https://ollama.com) (if required by the API)
-- Internet access to connect to the Ollama API.
-
 ## Installation
 
 To get started, install the `OllamaClient` package via NuGet Package Manager:
