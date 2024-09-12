@@ -2,29 +2,32 @@
 using OllamaSharp.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Ollama_API_Teting
+namespace Ollama_API_Testing
 {
    
-    public class OllamaChatProgram
+    public class OllamaSharp
     {
         private readonly OllamaApiClient ollama;
-        private readonly string modelName;
+        private string modelName;
         private Chat chat;
 
-        public OllamaChatProgram(string serverUrl, string modelName)
+
+
+
+
+        public OllamaSharp(string serverUrl)
         {
             this.ollama = new OllamaApiClient(new Uri(serverUrl));
-            this.modelName = modelName;
-            this.ollama.SelectedModel = modelName;
         }
 
+        
         public async Task Initialize()
         {
-            Console.WriteLine($"Using model: {modelName}");
-
             await ListModels();
+            await SelectModel();
             await EnsureModelAvailable();
 
             this.chat = new Chat(ollama);
@@ -41,6 +44,38 @@ namespace Ollama_API_Teting
             }
         }
 
+
+        private async Task SelectModel()
+        {
+            while (true)
+            {
+                Console.Write("\nEnter the name : ");
+                modelName = Console.ReadLine()?.Trim();
+
+                if (string.IsNullOrWhiteSpace(modelName))
+                {
+                    Console.WriteLine("Model name cannot be empty.");
+                    continue;
+                }
+
+                var models = await ollama.ListLocalModels();
+                if (models.Any(m => m.Name.Equals(modelName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    ollama.SelectedModel = modelName;
+                    Console.WriteLine($"Selected model: {modelName}");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine($"Model '{modelName}' not found. choose from the available models.");
+                }
+            }
+        }
+
+
+
+
+
         public async Task EnsureModelAvailable()
         {
             Console.WriteLine($"\nEnsuring {modelName} is available. Pulling if necessary...");
@@ -50,6 +85,9 @@ namespace Ollama_API_Teting
             }
             Console.WriteLine("\nModel ready.");
         }
+
+
+
 
         public async Task RunChat()
         {

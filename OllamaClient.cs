@@ -13,12 +13,10 @@ namespace Ollama_API_Testing
     public class OllamaClient
     {
         private readonly IOllamaHttpClient _client;
-        private readonly string _modelName;
+        private string _modelName;
 
-        public OllamaClient(string modelName)
+        public OllamaClient()
         {
-            _modelName = modelName;
-
             var serviceProvider = new ServiceCollection()
                                   .AddOllamaClient()
                                   .BuildServiceProvider();
@@ -26,16 +24,63 @@ namespace Ollama_API_Testing
             _client = serviceProvider.GetRequiredService<IOllamaHttpClient>();
         }
 
-        // Method to pull the model (asynchronous)
-        private async Task PullModel()
+
+
+
+        //get installed models to select
+        public async Task SelectModelAsync()
         {
             try
             {
-                var pullResult = await _client.Pull(new PullRequest
+                var modelsResponse = await _client.GetModels(CancellationToken.None);
+                Console.WriteLine("Installed Models:");
+
+                for (int i = 0; i < modelsResponse.Models.Count(); i++)
+                {
+                    Console.WriteLine($"{i + 1}. {modelsResponse.Models[i].Name}");
+                }
+
+                Console.WriteLine("Select a model by entering the corresponding number:");
+                if (int.TryParse(Console.ReadLine(), out int selectedIndex) &&
+                    selectedIndex > 0 && selectedIndex <= modelsResponse.Models.Count())
+                {
+                    _modelName = modelsResponse.Models[selectedIndex - 1].Name;
+                    Console.WriteLine($"Selected model: {_modelName}");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid selection. Please try again.");
+                    await SelectModelAsync(); // Prompt the user again if the input is invalid
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching models: {ex.Message}");
+            }
+        }
+
+
+
+
+
+
+        // pull model (synchronous)
+        private void PullModel()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_modelName))
+                {
+                    Console.WriteLine("No model selected. Please select a model first.");
+                    return;
+                }
+
+                var pullRequest = new PullRequest
                 {
                     Name = _modelName
-                }, CancellationToken.None);
+                };
 
+                var pullResult = _client.Pull(pullRequest, CancellationToken.None);
                 Console.WriteLine($"Model pull status: {pullResult.Status}");
             }
             catch (Exception ex)
@@ -46,26 +91,9 @@ namespace Ollama_API_Testing
 
 
 
-        // fetching installed models (asynchronous)
-        private async Task ListInstalledModels()
-        {
-            try
-            {
-                var modelsResponse = await _client.GetModels(CancellationToken.None);
 
-                Console.WriteLine("Installed Models:");
-                foreach (var model in modelsResponse.Models)
-                {
-                    Console.WriteLine(model.Name);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching models: {ex.Message}");
-            }
-        }
 
-        // chat interaction and return a full response (asynchronous)
+        // chat and return a full response (asynchronous)
         private async Task<string> GetChatResponse(string prompt)
         {
             if (string.IsNullOrWhiteSpace(prompt))
@@ -73,9 +101,14 @@ namespace Ollama_API_Testing
                 throw new ArgumentException("Prompt cannot be empty", nameof(prompt));
             }
 
+            if (string.IsNullOrEmpty(_modelName))
+            {
+                throw new InvalidOperationException("Model is not selected.");
+            }
+
             try
             {
-                var result = _client.SendChat(new ChatStreamRequest
+                var chatRequest = new ChatStreamRequest
                 {
                     Model = _modelName,
                     Messages = new List<Message>
@@ -86,7 +119,9 @@ namespace Ollama_API_Testing
                             Content = prompt
                         }
                     }
-                }, CancellationToken.None);
+                };
+
+                var result = _client.SendChat(chatRequest, CancellationToken.None);
 
                 StringBuilder fullResponse = new StringBuilder();
 
@@ -95,6 +130,7 @@ namespace Ollama_API_Testing
                     if (!string.IsNullOrEmpty(message?.Message?.Content))
                     {
                         fullResponse.Append(message.Message.Content);
+                        //Console.Write(message.Message.Content); // Output each message as it's received
                     }
                 }
 
@@ -107,19 +143,19 @@ namespace Ollama_API_Testing
             }
         }
 
-        //start the loop
+        // start the chat loop
         public async Task StartChatLoop()
         {
+            // select 
+            await SelectModelAsync();
+
             // pull model
-            await PullModel();
+            PullModel();
 
-            // list models
-            await ListInstalledModels();
-
-            // loop for chat 
+            // loop chat 
             while (true)
             {
-                Console.Write("\nEnter prompt (or type 'exit' to quit): ");
+                Console.WriteLine("\nEnter prompt (or type 'exit' to quit):");
                 var prompt = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(prompt))
@@ -133,9 +169,9 @@ namespace Ollama_API_Testing
                     break;
                 }
 
-                // response
+                // get response 
                 var response = await GetChatResponse(prompt);
-                Console.WriteLine($"{_modelName}: {response}");
+                Console.WriteLine($"\n{_modelName}: {response}");
             }
         }
     }
