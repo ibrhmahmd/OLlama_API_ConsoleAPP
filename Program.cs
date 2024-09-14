@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Ollama_API_Teting.DataAccessLayer;
+using Ollama_API_Testing.DataAccessLayer;
 
 namespace Ollama_API_Testing
 {
@@ -22,7 +22,7 @@ namespace Ollama_API_Testing
                 .ConfigureServices((context, services) =>
                 {
                     // Configure DbContext with connection string from configuration
-                    services.AddDbContext<ApplicationDbContext>(options =>
+                    services.AddDbContext<MyDbContext>(options =>
                         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
                 })
                 .Build();
@@ -30,7 +30,7 @@ namespace Ollama_API_Testing
             // Resolve DbContext and perform operations
             using (var scope = host.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
 
                 // Perform database operations here
             }
