@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Ollama_API_Testing.DataAccessLayer
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Feedback
     {
@@ -25,6 +26,9 @@ namespace Ollama_API_Testing.DataAccessLayer
         [Required]
         public DateTime Timestamp { get; set; }
 
+        [Required]
+        public  Guid ChatMessageID { get; set; }
+        public ChatMessage ChatMessage { get; set; }
 
     }
 }

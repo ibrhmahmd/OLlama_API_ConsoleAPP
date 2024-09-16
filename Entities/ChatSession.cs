@@ -30,12 +30,11 @@ namespace Ollama_API_Testing.DataAccessLayer
         public int ModelId { get; set; }
         public virtual AIModel ModelUsed { get; set; }
 
-        [Range(0, int.MaxValue)]
-        public int TokenUsage { get; set; }
+        [Range(0, 30000)]
+        public int contextStringLength { get; set; }
 
         // Navigation properties
-        public virtual ICollection<ChatMessage> Messages { get; set; }
-        public virtual ICollection<AIResponse> AIResponses { get; set; }
+        public virtual ICollection<ChatMessage> ChatMessages { get; set; }
     }
 
 

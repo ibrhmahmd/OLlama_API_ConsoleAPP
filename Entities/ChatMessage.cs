@@ -13,17 +13,22 @@ namespace Ollama_API_Testing.DataAccessLayer
         public Guid ChatMessageID { get; set; }
 
         [Required]
-        [StringLength(50)]
         public Guid UserID { get; set; }
+        public  User User{ get; set; }
 
         [Required]
+        [StringLength(1000)]
         public string Message { get; set; } //Content
+
+        [Required]
+        public Guid AIModelID { get; set; }
+        public AIModel AIModel { get; set; }
 
         [Required]
         public DateTime Timestamp { get; set; }
 
         public string? VectorRepresentation { get; set; }
-
+                
         [Range(0.0, 1.0)]
         public float? RelevanceScore { get; set; }
 
@@ -32,7 +37,7 @@ namespace Ollama_API_Testing.DataAccessLayer
         public Guid ChatSessionID { get; set; }
         public virtual ChatSession ChatSession { get; set; }
 
-        public Guid? AIResponseID { get; set; }
-        public virtual AIResponse AIResponse { get; set; }
+        // Navigation property
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
     }
 }

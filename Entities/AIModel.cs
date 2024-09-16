@@ -26,10 +26,10 @@ namespace Ollama_API_Testing.DataAccessLayer
         [Required]
         public DateTime ReleasedAt { get; set; }
 
-        [Range(1, int.MaxValue)]
-        public int MaxTokens { get; set; }
+        [StringLength(20)]
+        public string MaxTokens { get; set; }
 
-        public string? TrainingData { get; set; }
+        //public string? TrainingData { get; set; }
 
         //[Range(0.0, double.MaxValue)]
         //public double CostPerToken { get; set; }
@@ -39,15 +39,18 @@ namespace Ollama_API_Testing.DataAccessLayer
 
         public List<string> LanguagesSupported { get; set; } // List of languages the model supports
 
-        public long Parameters { get; set; }
+        public string Parameters { get; set; }
 
         public string Quantization { get; set; }          // Indicates if the model quantization level
         public bool IsCustomizable { get; set; }       // Indicates if the model can be fine-tuned
 
+        public Guid CategoryID { get; set; }
+        public Category category{ get; set; }
 
         // Navigation properties
-        public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<ChatSession> ChatSessions { get; set; }
+        public virtual ICollection<ChatMessage> ChatMessages { get; internal set; }
+
     }
 
 }
