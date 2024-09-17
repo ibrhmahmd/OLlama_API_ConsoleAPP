@@ -14,7 +14,7 @@ namespace Ollama_API_Testing
             // Build configuration
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("AppSettings.json")
                 .Build();
 
             // Build the host to configure services

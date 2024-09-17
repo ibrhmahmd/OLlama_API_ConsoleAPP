@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ollama_API_Testing.DataAccessLayer
 {
+    using global::DataAccessLayer.Entities;
     using System.ComponentModel.DataAnnotations;
 
     public class ModelPrompt
@@ -34,6 +35,8 @@ namespace Ollama_API_Testing.DataAccessLayer
 
         [StringLength(300)]
         public string? Discrepsion { get; set; }
-        
+
+        public bool IsDeleted { get; set; }
+
     }
 }

@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DataAccessLayer.Entities;
+using DataAccessLayer.Migrations;
 
 namespace Ollama_API_Testing.DataAccessLayer
 {
-   
     public class ChatSession
     {
         [Key]
@@ -33,9 +34,10 @@ namespace Ollama_API_Testing.DataAccessLayer
         [Range(0, 30000)]
         public int contextStringLength { get; set; }
 
+
+        public bool IsDeleted { get; set; } // Soft delete flag
+
         // Navigation properties
         public virtual ICollection<ChatMessage> ChatMessages { get; set; }
     }
-
-
 }

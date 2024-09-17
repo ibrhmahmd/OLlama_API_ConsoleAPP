@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using DataAccessLayer.Entities;
 
 namespace Ollama_API_Testing.DataAccessLayer
 {
@@ -16,9 +17,15 @@ namespace Ollama_API_Testing.DataAccessLayer
         public Guid UserID { get; set; }
         public  User User{ get; set; }
 
-        [Required]
         [StringLength(1000)]
-        public string Message { get; set; } //Content
+        public string? UserMessage { get; set; } //Content
+
+        [StringLength(1000)]
+        public string? AIResponse { get; set; } //Content
+
+
+        public bool From { get; set; }
+
 
         [Required]
         public Guid AIModelID { get; set; }
@@ -31,6 +38,9 @@ namespace Ollama_API_Testing.DataAccessLayer
                 
         [Range(0.0, 1.0)]
         public float? RelevanceScore { get; set; }
+
+        public bool IsDeleted { get; set; }
+
 
         // Foreign keys
         [Required]

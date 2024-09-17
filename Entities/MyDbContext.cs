@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using DataAccessLayer.Entities;
 
 namespace Ollama_API_Testing.DataAccessLayer
 {
@@ -16,13 +17,19 @@ namespace Ollama_API_Testing.DataAccessLayer
         {}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer("Data Source=IBRAHIM;Initial Catalog=OllamaChatDB;Integrated Security=True;Trust Server Certificate=True");
+        {
+            if (!optionsBuilder.IsConfigured) // Check if already configured (e.g., during tests)
+            {
+                optionsBuilder.UseSqlServer("Data Source=IBRAHIM;Initial Catalog=OllamaChatDB;Integrated Security=True;Trust Server Certificate=True");
+            }
+        }
+
 
         public DbSet<User> Users { get; set; }
         public DbSet<ChatSession> ChatSessions { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<ModelPrompt> Prompts { get; set; }
-        public DbSet<AIModel> LanguageModels { get; set; }
+        public DbSet<AIModel> AIModels { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<AnalyticsLog> AnalyticsLogs { get; set; }

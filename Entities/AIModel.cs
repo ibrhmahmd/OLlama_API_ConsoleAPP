@@ -37,7 +37,7 @@ namespace Ollama_API_Testing.DataAccessLayer
         [Range(0.0, 1.0)]
         public double Accuracy { get; set; }
 
-        public List<string> LanguagesSupported { get; set; } // List of languages the model supports
+        public List<string>? LanguagesSupported { get; set; } // List of languages the model supports
 
         public string Parameters { get; set; }
 
@@ -46,6 +46,8 @@ namespace Ollama_API_Testing.DataAccessLayer
 
         public Guid CategoryID { get; set; }
         public Category category{ get; set; }
+
+        public bool IsDeleted { get; set; } // Soft delete flag
 
         // Navigation properties
         public virtual ICollection<ChatSession> ChatSessions { get; set; }

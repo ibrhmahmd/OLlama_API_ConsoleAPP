@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Ollama_API_Testing.DataAccessLayer
 {
+    using global::DataAccessLayer.Entities;
     using System.ComponentModel.DataAnnotations;
 
     public class AnalyticsLog
     {
         [Key]
-        public int Id { get; set; }
+        public Guid AnalyticsLogID { get; set; }
 
         [Required]
         public int UserId { get; set; }
@@ -25,6 +26,9 @@ namespace Ollama_API_Testing.DataAccessLayer
 
         [Required]
         public DateTime Timestamp { get; set; }
+
+        public bool IsDeleted { get; set; } // Soft delete flag
+
     }
 
 }

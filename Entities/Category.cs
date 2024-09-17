@@ -19,8 +19,11 @@ namespace Ollama_API_Testing.DataAccessLayer
 
         public string? Description { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         // Navigation properties
-        public virtual ICollection<AIModel> Models { get; set; }
+        public virtual ICollection<AIModel> AIModels { get; set; }
+
     }
 
 }

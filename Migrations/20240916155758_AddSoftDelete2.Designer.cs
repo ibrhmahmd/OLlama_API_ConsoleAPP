@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ollama_API_Testing.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using Ollama_API_Testing.DataAccessLayer;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240916155758_AddSoftDelete2")]
+    partial class AddSoftDelete2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,14 +291,16 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AIModels");
+                    b.ToTable("LanguageModels");
                 });
 
             modelBuilder.Entity("Ollama_API_Testing.DataAccessLayer.AnalyticsLog", b =>
                 {
-                    b.Property<Guid>("AnalyticsLogID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("EventDetails")
                         .IsRequired()
@@ -318,7 +323,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<Guid>("UserId1")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("AnalyticsLogID");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId1");
 
@@ -356,18 +361,16 @@ namespace DataAccessLayer.Migrations
                     b.Property<Guid>("AIModelID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AIResponse")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
                     b.Property<Guid>("ChatSessionID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("From")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<float?>("RelevanceScore")
                         .HasColumnType("real");
@@ -377,10 +380,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserMessage")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("VectorRepresentation")
                         .HasColumnType("nvarchar(max)");
